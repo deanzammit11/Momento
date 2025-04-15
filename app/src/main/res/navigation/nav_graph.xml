@@ -19,6 +19,12 @@
         android:name="com.example.momento.fragments.ManageCategoriesFragment"
         android:label="Categories" />
 
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="com.example.momento.fragments.EventDetailsFragment"
+        android:label="Event Details">
+        <argument android:name="eventId" app:argType="integer"/>
+    </fragment>
 </navigation>
 
 

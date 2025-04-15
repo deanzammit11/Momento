@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.activity.result.ActivityResultLauncher;
@@ -42,7 +44,12 @@ public class EventListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(getContext(), eventList);
+        eventAdapter = new EventAdapter(getContext(), eventList, event -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("eventId", event.getId());
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.eventDetailsFragment, bundle);
+        });
         recyclerView.setAdapter(eventAdapter);
 
         fabAddEvent = view.findViewById(R.id.fabAddEvent);

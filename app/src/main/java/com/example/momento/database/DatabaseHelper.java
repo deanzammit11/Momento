@@ -17,7 +17,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "momento.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String TABLE_EVENTS = "events";
     private static final String COLUMN_ID = "id";
@@ -102,4 +102,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return defaultValue;
         }
     }
+
+    public Event getEventById(int eventId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_EVENTS, null, COLUMN_ID + "=?",
+                new String[]{String.valueOf(eventId)},
+                null, null, null);
+
+        Event event = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            event = new Event(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCATION)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI))
+            );
+            cursor.close();
+        }
+        db.close();
+        return event;
+    }
+
 }

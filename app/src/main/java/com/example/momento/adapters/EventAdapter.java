@@ -17,6 +17,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     private Context context;
     private List<Event> eventList;
+    private OnItemClickListener listener;
+
+    public EventAdapter(Context context, List<Event> eventList, OnItemClickListener listener) {
+        this.context = context;
+        this.eventList = eventList;
+        this.listener = listener;
+    }
 
     public EventAdapter(Context context, List<Event> eventList) {
         this.context = context;
@@ -48,7 +55,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.titleTextView.setText(event.getTitle());
         holder.dateTextView.setText(event.getDate());
         holder.locationTextView.setText(event.getLocation());
-
         if (event.getImageUri() != null && !event.getImageUri().isEmpty()) {
             Glide.with(context)
                     .load(Uri.parse(event.getImageUri()))
@@ -58,10 +64,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         } else {
             holder.eventImageView.setImageResource(R.drawable.ic_image_placeholder);
         }
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(event));
     }
 
     @Override
     public int getItemCount() {
         return eventList.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Event event);
     }
 }

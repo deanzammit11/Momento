@@ -12,11 +12,18 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.momento.R;
 import com.example.momento.database.DatabaseHelper;
 import com.example.momento.models.Event;
-import java.util.Calendar;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class AddEventActivity extends AppCompatActivity {
@@ -44,10 +51,17 @@ public class AddEventActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        selectedImageUri = result.getData().getData();
-                        imageView.setImageURI(selectedImageUri);
+                        Uri pickedImageUri = result.getData().getData();
+                        try {
+                            selectedImageUri = copyImageToInternalStorage(pickedImageUri);
+                            imageView.setImageURI(selectedImageUri);
+                        } catch (IOException e) {
+                            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
                     }
                 });
+
         imageView.setOnClickListener(v -> openImageChooser());
     }
 
@@ -75,6 +89,7 @@ public class AddEventActivity extends AppCompatActivity {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
+
         datePickerDialog.show();
     }
 
@@ -97,8 +112,24 @@ public class AddEventActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         dbHelper.insertEvent(event);
 
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK);
         finish();
+    }
+
+    private Uri copyImageToInternalStorage(Uri sourceUri) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(sourceUri);
+        File file = new File(getFilesDir(), "event_" + System.currentTimeMillis() + ".jpg");
+        OutputStream outputStream = new FileOutputStream(file);
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, length);
+        }
+
+        inputStream.close();
+        outputStream.close();
+
+        return Uri.fromFile(file);
     }
 }
