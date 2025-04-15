@@ -6,13 +6,12 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/event_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:id="@+id/eventImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:scaleType="centerCrop"
-        android:contentDescription="Event Image"
         android:src="@drawable/ic_image_placeholder"
-        android:layout_gravity="center" />
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:id="@+id/eventTitle"
