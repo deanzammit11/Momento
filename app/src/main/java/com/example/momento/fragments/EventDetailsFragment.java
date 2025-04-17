@@ -6,7 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.bumptech.glide.Glide;
 import com.example.momento.R;
 import com.example.momento.database.DatabaseHelper;
@@ -54,6 +58,14 @@ public class EventDetailsFragment extends Fragment {
         });
 
         view.findViewById(R.id.buttonDelete).setOnClickListener(v -> {
+            DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+            boolean deleted = dbHelper.deleteEvent(eventId);
+            if (deleted) {
+                Toast.makeText(getContext(), "Event deleted", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(view).popBackStack(); // Go back to list
+            } else {
+                Toast.makeText(getContext(), "Failed to delete event", Toast.LENGTH_SHORT).show();
+            }
         });
 
         view.findViewById(R.id.buttonCheckWeather).setOnClickListener(v -> {

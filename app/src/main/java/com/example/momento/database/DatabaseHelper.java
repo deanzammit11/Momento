@@ -5,19 +5,21 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.example.momento.models.Event;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "momento.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
 
     private static final String TABLE_EVENTS = "events";
     private static final String COLUMN_ID = "id";
@@ -126,4 +128,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return event;
     }
 
+    public boolean deleteEvent(int eventId) {
+        // 1) Load the Event first (getEventById opens & closes its own DB handle)
+        Event event = getEventById(eventId);
+
+        // 2) Now open the writable DB for deletion
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // 3) Delete the associated local image file, if any
+        if (event != null && event.getImageUri() != null) {
+            try {
+                File imageFile = new File(Uri.parse(event.getImageUri()).getPath());
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 4) Delete the row from the table
+        int rows = db.delete(TABLE_EVENTS,
+                COLUMN_ID + "=?",
+                new String[]{ String.valueOf(eventId) });
+
+        // 5) Close this writable DB
+        db.close();
+
+        return rows > 0;
+    }
 }
