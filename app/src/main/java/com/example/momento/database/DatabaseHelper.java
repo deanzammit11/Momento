@@ -128,14 +128,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return event;
     }
 
-    public boolean deleteEvent(int eventId) {
-        // 1) Load the Event first (getEventById opens & closes its own DB handle)
-        Event event = getEventById(eventId);
-
-        // 2) Now open the writable DB for deletion
+    public boolean updateEvent(Event event) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // 3) Delete the associated local image file, if any
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE,       event.getTitle());
+        values.put(COLUMN_DATE,        event.getDate());
+        values.put(COLUMN_LOCATION,    event.getLocation());
+        values.put(COLUMN_DESCRIPTION, event.getDescription());
+        values.put(COLUMN_CATEGORY,    event.getCategory());
+        values.put(COLUMN_IMAGE_URI,   event.getImageUri());
+
+        int rows = db.update(TABLE_EVENTS,
+                values,
+                COLUMN_ID + " = ?",
+                new String[]{ String.valueOf(event.getId()) });
+
+        db.close();
+        return rows > 0;
+    }
+
+    public boolean deleteEvent(int eventId) {
+        Event event = getEventById(eventId);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
         if (event != null && event.getImageUri() != null) {
             try {
                 File imageFile = new File(Uri.parse(event.getImageUri()).getPath());
@@ -147,12 +164,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
 
-        // 4) Delete the row from the table
         int rows = db.delete(TABLE_EVENTS,
                 COLUMN_ID + "=?",
                 new String[]{ String.valueOf(eventId) });
 
-        // 5) Close this writable DB
         db.close();
 
         return rows > 0;
