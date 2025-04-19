@@ -45,12 +45,11 @@
         android:hint="Description"
         android:inputType="text"/>
 
-    <EditText
-        android:id="@+id/categoryEditText"
+    <Spinner
+        android:id="@+id/spinner_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Category"
-        android:inputType="text"/>
+        android:layout_marginTop="16dp" />
 
     <ImageView
         android:id="@+id/imageView"

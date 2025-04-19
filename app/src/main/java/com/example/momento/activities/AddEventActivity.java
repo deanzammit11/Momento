@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -16,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.momento.R;
 import com.example.momento.database.DatabaseHelper;
+import com.example.momento.models.Category;
 import com.example.momento.models.Event;
 
 import java.io.File;
@@ -24,15 +27,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class AddEventActivity extends AppCompatActivity {
 
-    private EditText titleEditText, dateEditText, locationEditText, descriptionEditText, categoryEditText;
+    private EditText titleEditText, dateEditText, locationEditText, descriptionEditText;
+    private Spinner spinnerCategory;
     private ImageView imageView;
     private Uri selectedImageUri;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private List<Category> categoryList;
+    private ArrayAdapter<String> categoryAdapter;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +55,15 @@ public class AddEventActivity extends AppCompatActivity {
         dateEditText = findViewById(R.id.dateEditText);
         locationEditText = findViewById(R.id.locationEditText);
         descriptionEditText = findViewById(R.id.descriptionEditText);
-        categoryEditText = findViewById(R.id.categoryEditText);
+        spinnerCategory = findViewById(R.id.spinner_category);
         imageView = findViewById(R.id.imageView);
+
+        db = new DatabaseHelper(this);
+        loadCategoriesIntoSpinner();
 
         dateEditText.setOnClickListener(v -> showDatePickerDialog());
 
-        imagePickerLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
+        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         Uri pickedImageUri = result.getData().getData();
                         try {
@@ -65,8 +75,20 @@ public class AddEventActivity extends AppCompatActivity {
                         }
                     }
                 });
-
         imageView.setOnClickListener(v -> openImageChooser());
+    }
+
+    private void loadCategoriesIntoSpinner() {
+        categoryList = db.getAllCategories();
+        List<String> categoryNames = new ArrayList<>();
+
+        for (Category category : categoryList) {
+            categoryNames.add(category.getName());
+        }
+
+        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoryNames);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(categoryAdapter);
     }
 
     private void openImageChooser() {
@@ -78,8 +100,7 @@ public class AddEventActivity extends AppCompatActivity {
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(selectedYear, selectedMonth, selectedDay);
 
@@ -102,7 +123,7 @@ public class AddEventActivity extends AppCompatActivity {
         String date = dateEditText.getText().toString();
         String location = locationEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
-        String category = categoryEditText.getText().toString();
+        String category = spinnerCategory.getSelectedItem() != null ? spinnerCategory.getSelectedItem().toString() : "";
 
         if (title.isEmpty() || date.isEmpty() || location.isEmpty() || category.isEmpty()) {
             Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
@@ -113,8 +134,7 @@ public class AddEventActivity extends AppCompatActivity {
 
         Event event = new Event(0, title, date, location, description, category, imageUriString);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        dbHelper.insertEvent(event);
+        db.insertEvent(event);
 
         setResult(RESULT_OK);
         finish();

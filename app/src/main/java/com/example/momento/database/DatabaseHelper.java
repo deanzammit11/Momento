@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.momento.models.Category;
 import com.example.momento.models.Event;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "momento.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TABLE_EVENTS = "events";
     private static final String COLUMN_ID = "id";
@@ -29,6 +30,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DESCRIPTION = "description";
     private static final String COLUMN_CATEGORY = "category";
     private static final String COLUMN_IMAGE_URI = "image_uri";
+
+    private static final String TABLE_CATEGORIES = "categories";
+    private static final String COLUMN_CATEGORY_ID = "id";
+    private static final String COLUMN_CATEGORY_NAME = "name";
 
     private static final String CREATE_TABLE_EVENTS =
             "CREATE TABLE " + TABLE_EVENTS + " (" +
@@ -40,6 +45,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_CATEGORY + " TEXT, " +
                     COLUMN_IMAGE_URI + " TEXT);";
 
+    private static final String CREATE_TABLE_CATEGORIES =
+            "CREATE TABLE " + TABLE_CATEGORIES + " (" +
+                    COLUMN_CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_CATEGORY_NAME + " TEXT);";
+
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -47,11 +57,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_EVENTS);
+        db.execSQL(CREATE_TABLE_CATEGORIES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
         onCreate(db);
     }
 
@@ -171,5 +183,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return rows > 0;
+    }
+
+    public long insertCategory(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CATEGORY_NAME, name);
+        return db.insert(TABLE_CATEGORIES, null, values);
+    }
+
+    public List<Category> getAllCategories() {
+        List<Category> categories = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CATEGORIES, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Category category = new Category();
+                category.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY_ID)));
+                category.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY_NAME)));
+                categories.add(category);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return categories;
+    }
+
+    public void updateCategory(int id, String newName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CATEGORY_NAME, newName);
+        db.update(TABLE_CATEGORIES, values, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public void deleteCategory(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CATEGORIES, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
     }
 }
