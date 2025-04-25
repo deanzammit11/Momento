@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,11 @@ public class EventDetailsFragment extends Fragment {
     private ImageView eventImage;
     private TextView title, description, date, location, category;
     private int eventId;
+    private TextView weatherText;
+    private ImageView weatherIcon;
+    private LinearLayout weatherLayout;
+    private Button buttonCheckWeather;
+    private String apiKey = "0b1ccab07a6bb42adf87a9b3d949014d";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +54,11 @@ public class EventDetailsFragment extends Fragment {
         eventId = getArguments().getInt("eventId", -1);
         loadEvent();
 
+        weatherText = view.findViewById(R.id.weatherText);
+        weatherIcon = view.findViewById(R.id.weatherIcon);
+        weatherLayout = view.findViewById(R.id.weatherLayout);
+        buttonCheckWeather = view.findViewById(R.id.buttonCheckWeather);
+
         view.findViewById(R.id.buttonEdit).setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), EditEventActivity.class);
             intent.putExtra("eventId", eventId);
@@ -62,8 +74,12 @@ public class EventDetailsFragment extends Fragment {
             if (ok) Navigation.findNavController(view).popBackStack();
         });
 
-        view.findViewById(R.id.buttonCheckWeather).setOnClickListener(v -> {
-
+        buttonCheckWeather.setOnClickListener(v -> {
+            DatabaseHelper db = new DatabaseHelper(getContext());
+            Event event = db.getEventById(eventId);
+            if (event != null) {
+                fetchWeather(event.getLocation());
+            }
         });
 
         return view;
@@ -96,4 +112,81 @@ public class EventDetailsFragment extends Fragment {
             loadEvent();
         }
     });
+
+    private void fetchWeather(String location) {
+        if (location == null || location.trim().length() < 3) {
+            Toast.makeText(getContext(), "Please enter a valid city or country.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String userInput = location.trim();
+
+        new Thread(() -> {
+            try {
+                String geoUrl = "https://api.openweathermap.org/geo/1.0/direct?q=" + java.net.URLEncoder.encode(userInput, "UTF-8") + "&limit=1&appid=" + apiKey;
+
+                java.net.URL url = new java.net.URL(geoUrl);
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+
+                java.io.InputStream in = conn.getInputStream();
+                java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(in));
+                StringBuilder geoResult = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) geoResult.append(line);
+
+                org.json.JSONArray geoArray = new org.json.JSONArray(geoResult.toString());
+
+                if (geoArray.length() == 0) {
+                    throw new Exception("No matching place found");
+                }
+
+                org.json.JSONObject place = geoArray.getJSONObject(0);
+                String resolvedName = place.optString("name", "").trim();
+                String country = place.optString("country", "").trim();
+                double lat = place.getDouble("lat");
+                double lon = place.getDouble("lon");
+
+                String lowerUserInput = userInput.toLowerCase();
+                String lowerResolved = resolvedName.toLowerCase();
+
+                if (!lowerResolved.equals(lowerUserInput) && !lowerResolved.contains(lowerUserInput) && !lowerUserInput.contains(lowerResolved)) {
+                    throw new Exception("Resolved location '" + resolvedName + "' does not match input '" + userInput + "'");
+                }
+
+                String weatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=metric";
+
+                java.net.URL weatherApi = new java.net.URL(weatherUrl);
+                java.net.HttpURLConnection weatherConn = (java.net.HttpURLConnection) weatherApi.openConnection();
+                weatherConn.setRequestMethod("GET");
+
+                java.io.InputStream weatherIn = weatherConn.getInputStream();
+                java.io.BufferedReader weatherReader = new java.io.BufferedReader(new java.io.InputStreamReader(weatherIn));
+                StringBuilder weatherResult = new StringBuilder();
+                while ((line = weatherReader.readLine()) != null) weatherResult.append(line);
+
+                org.json.JSONObject weatherObj = new org.json.JSONObject(weatherResult.toString());
+                String description = weatherObj.getJSONArray("weather").getJSONObject(0).getString("description");
+                String icon = weatherObj.getJSONArray("weather").getJSONObject(0).getString("icon");
+                double temp = weatherObj.getJSONObject("main").getDouble("temp");
+
+                String weatherInfo = resolvedName + ", " + country + " • " + description + " • " + temp + "°C";
+                String iconUrl = "https://openweathermap.org/img/wn/" + icon + "@2x.png";
+
+                requireActivity().runOnUiThread(() -> {
+                    weatherLayout.setVisibility(View.VISIBLE);
+                    weatherText.setText(weatherInfo);
+                    Glide.with(requireContext()).load(iconUrl).placeholder(R.drawable.ic_image_placeholder).error(R.drawable.ic_image_placeholder).into(weatherIcon);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(),
+                            "Could not fetch weather for: " + location + ". Try a valid city or country name.",
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+    }
 }
