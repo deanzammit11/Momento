@@ -16,11 +16,11 @@ import androidx.fragment.app.Fragment;
 import com.example.momento.R;
 import com.example.momento.activities.AddEventActivity;
 import com.example.momento.database.DatabaseHelper;
+import com.google.android.material.button.MaterialButton;
 
 public class HomeFragment extends Fragment {
-
-    private TextView textViewEventCount;
-    private Button buttonAddEvent;
+    private MaterialButton buttonEventCount;
+    private MaterialButton buttonAddEvent;
 
     private final ActivityResultLauncher<Intent> addEventActivityResultLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -33,7 +33,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        textViewEventCount = view.findViewById(R.id.textViewEventCount);
+        buttonEventCount = view.findViewById(R.id.buttonEventCount);
         buttonAddEvent = view.findViewById(R.id.buttonAddEvent);
 
         buttonAddEvent.setOnClickListener(v -> {
@@ -49,6 +49,6 @@ public class HomeFragment extends Fragment {
     private void updateEventCount() {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
         int count = dbHelper.getAllEvents().size();
-        textViewEventCount.setText(count + (count == 1 ? " Event Added" : " Events Added"));
+        buttonEventCount.setText(count + (count == 1 ? " Event" : " Events"));
     }
 }

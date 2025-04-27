@@ -3,13 +3,14 @@ package com.example.momento.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,10 +35,9 @@ public class EventListFragment extends Fragment {
     private EventAdapter eventAdapter;
     private FloatingActionButton fabAddEvent;
     private List<Event> eventList;
-    private Spinner spinnerFilterCategory;
+    private AutoCompleteTextView spinnerFilterCategory;
     private DatabaseHelper db;
     private List<Category> categoryList;
-    private ArrayAdapter<String> categoryAdapter;
 
     private ActivityResultLauncher<Intent> addEventActivityResultLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -52,7 +52,7 @@ public class EventListFragment extends Fragment {
 
         db = new DatabaseHelper(getContext());
 
-        spinnerFilterCategory = view.findViewById(R.id.spinner_filter_category);
+        spinnerFilterCategory = (AutoCompleteTextView) view.findViewById(R.id.spinner_filter_category);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -78,33 +78,36 @@ public class EventListFragment extends Fragment {
     private void setupCategoryFilter() {
         categoryList = db.getAllCategories();
         List<String> categoryNames = new ArrayList<>();
-        categoryNames.add("All Categories");
+        categoryNames.add(getString(R.string.filter_by_category));
 
         for (Category category : categoryList) {
             categoryNames.add(category.getName());
         }
 
-        categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categoryNames);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFilterCategory.setAdapter(categoryAdapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_dropdown_item, categoryNames);
+        spinnerFilterCategory.setAdapter(adapter);
 
-        spinnerFilterCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                filterEventList(categoryAdapter.getItem(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No action needed
-            }
+        spinnerFilterCategory.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedCategory = adapter.getItem(position);
+            filterEventList(selectedCategory);
         });
+
+        spinnerFilterCategory.setText(getString(R.string.filter_by_category), false);
+
+        spinnerFilterCategory.setDropDownBackgroundDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.spinner_dropdown_background)
+        );
+
+        spinnerFilterCategory.post(() -> spinnerFilterCategory.setDropDownWidth(spinnerFilterCategory.getWidth()));
+
+        filterEventList(categoryNames.get(0));
     }
 
     private void filterEventList(String categoryName) {
         eventList.clear();
 
-        if (categoryName.equals("All Categories")) {
+        String placeholder = getString(R.string.filter_by_category);
+        if (categoryName.equals(placeholder)) {
             eventList.addAll(db.getAllEvents());
         } else {
             for (Event e : db.getAllEvents()) {
@@ -117,8 +120,8 @@ public class EventListFragment extends Fragment {
     }
 
     public void refreshEventList() {
-        if (spinnerFilterCategory != null && spinnerFilterCategory.getSelectedItem() != null) {
-            filterEventList(spinnerFilterCategory.getSelectedItem().toString());
+        if (spinnerFilterCategory != null && spinnerFilterCategory.getText() != null) {
+            filterEventList(spinnerFilterCategory.getText().toString());
         } else {
             eventList.clear();
             eventList.addAll(db.getAllEvents());
