@@ -5,17 +5,15 @@ public class Event {
     private String title;
     private String date;
     private String location;
-    private String description;
     private String category;
     private String imageUri;
 
     // Constructor
-    public Event(int id, String title, String date, String location, String description, String category, String imageUri) {
+    public Event(int id, String title, String date, String location, String category, String imageUri) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.location = location;
-        this.description = description;
         this.category = category;
         this.imageUri = imageUri;
     }
@@ -31,9 +29,6 @@ public class Event {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_teal"
     android:padding="16dp">
 
     <LinearLayout
@@ -16,16 +18,26 @@
             android:layout_height="24dp"
             android:layout_margin="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/ic_arrow_back"
             android:contentDescription="@string/close"
-            app:tint="@android:color/black" />
+            app:tint="@color/dark_text" />
 
-        <ImageView
-            android:id="@+id/eventDetailImage"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_image_placeholder" />
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/dark_text"
+            android:backgroundTint="@color/mustard_yellow">
+
+            <ImageView
+                android:id="@+id/eventDetailImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_image_placeholder" />
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/eventDetailTitle"
@@ -34,49 +46,109 @@
             android:text="Event Title"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:textColor="@color/dark_text"
+            android:gravity="center"
+            android:layout_marginTop="12dp"/>
 
-        <TextView
-            android:id="@+id/eventDetailDescription"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Event Description"
-            android:paddingTop="4dp"/>
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
 
-        <TextView
-            android:id="@+id/eventDetailDate"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Date"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_text"/>
+                <TextView
+                    android:id="@+id/eventDetailDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25 Apr 2025"
+                    android:textColor="@color/dark_text"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/dark_text"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Location"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_text"/>
+                <TextView
+                    android:id="@+id/eventDetailLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Valletta"
+                    android:textColor="@color/dark_text"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/dark_text"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Category"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_text"/>
+                <TextView
+                    android:id="@+id/eventDetailCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entertainment"
+                    android:textColor="@color/dark_text"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Event Date"
-            android:paddingTop="4dp"/>
-
-        <TextView
-            android:id="@+id/eventDetailLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Event Location"
-            android:paddingTop="4dp"/>
-
-        <TextView
-            android:id="@+id/eventDetailCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Event Category"
-            android:paddingTop="4dp"/>
-
-        <Button
-            android:id="@+id/buttonEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Edit"
-            android:layout_marginTop="8dp"/>
-
-        <Button
-            android:id="@+id/buttonDelete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Delete"
-            android:layout_marginTop="4dp"/>
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="24dp">
+            <Button
+                android:id="@+id/buttonEdit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit"
+                android:backgroundTint="@color/dark_blue"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp"/>
+            <Button
+                android:id="@+id/buttonDelete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delete"
+                android:backgroundTint="@color/red"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/weatherLayout"
@@ -86,20 +158,18 @@
             android:gravity="center_vertical"
             android:visibility="gone"
             android:layout_marginTop="16dp">
-
             <ImageView
                 android:id="@+id/weatherIcon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="12dp" />
-
             <TextView
                 android:id="@+id/weatherText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Weather will appear here"
                 android:textSize="16sp"
-                android:textColor="#333333" />
+                android:textColor="@color/dark_text" />
         </LinearLayout>
 
         <Button
@@ -107,7 +177,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Check Weather"
-            android:layout_marginTop="4dp"/>
-
+            android:backgroundTint="@color/dark_blue"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="12dp"/>
     </LinearLayout>
 </ScrollView>

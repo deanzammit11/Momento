@@ -3,7 +3,7 @@ package com.example.momento.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,7 +42,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         Category category = categoryList.get(position);
         holder.nameText.setText(category.getName());
 
-        holder.editBtn.setOnClickListener(v -> {
+        holder.renameBtn.setOnClickListener(v -> {
             if (listener != null) listener.onEdit(category);
         });
 
@@ -58,13 +58,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView nameText;
-        ImageButton editBtn, deleteBtn;
+        Button renameBtn, deleteBtn;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.text_view_category_name);
-            editBtn = itemView.findViewById(R.id.btn_edit_category);
-            deleteBtn = itemView.findViewById(R.id.btn_delete_category);
+            renameBtn  = itemView.findViewById(R.id.btn_rename_category);
+            deleteBtn= itemView.findViewById(R.id.btn_delete_category);
         }
     }
 }

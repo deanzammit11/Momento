@@ -27,7 +27,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_DATE = "date";
     private static final String COLUMN_LOCATION = "location";
-    private static final String COLUMN_DESCRIPTION = "description";
     private static final String COLUMN_CATEGORY = "category";
     private static final String COLUMN_IMAGE_URI = "image_uri";
 
@@ -41,7 +40,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_TITLE + " TEXT, " +
                     COLUMN_DATE + " TEXT, " +
                     COLUMN_LOCATION + " TEXT, " +
-                    COLUMN_DESCRIPTION + " TEXT, " +
                     COLUMN_CATEGORY + " TEXT, " +
                     COLUMN_IMAGE_URI + " TEXT);";
 
@@ -74,7 +72,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TITLE, event.getTitle());
         values.put(COLUMN_DATE, event.getDate());
         values.put(COLUMN_LOCATION, event.getLocation());
-        values.put(COLUMN_DESCRIPTION, event.getDescription());
         values.put(COLUMN_CATEGORY, event.getCategory());
         values.put(COLUMN_IMAGE_URI, event.getImageUri());
 
@@ -94,11 +91,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String title = getColumnValue(cursor, COLUMN_TITLE, "Default Title");
                 String date = getColumnValue(cursor, COLUMN_DATE, "Default Date");
                 String location = getColumnValue(cursor, COLUMN_LOCATION, "Default Location");
-                String description = getColumnValue(cursor, COLUMN_DESCRIPTION, "Default Description");
                 String category = getColumnValue(cursor, COLUMN_CATEGORY, "Default Category");
                 String imageUri = getColumnValue(cursor, COLUMN_IMAGE_URI, "");
 
-                Event event = new Event(id, title, date, location, description, category, imageUri);
+                Event event = new Event(id, title, date, location, category, imageUri);
                 eventList.add(event);
             } while (cursor.moveToNext());
             cursor.close();
@@ -130,7 +126,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCATION)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI))
             );
@@ -147,7 +142,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TITLE,       event.getTitle());
         values.put(COLUMN_DATE,        event.getDate());
         values.put(COLUMN_LOCATION,    event.getLocation());
-        values.put(COLUMN_DESCRIPTION, event.getDescription());
         values.put(COLUMN_CATEGORY,    event.getCategory());
         values.put(COLUMN_IMAGE_URI,   event.getImageUri());
 

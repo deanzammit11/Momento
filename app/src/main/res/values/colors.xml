@@ -4,6 +4,7 @@
     <color name="light_teal">#8ED1CB</color>
     <color name="dark_blue">#1A374D</color>
     <color name="mustard_yellow">#FFC857</color>
+    <color name="red">#B00020</color>
     <color name="dark_text">#102A43</color>
     <color name="white">#FFFFFF</color>
 </resources>

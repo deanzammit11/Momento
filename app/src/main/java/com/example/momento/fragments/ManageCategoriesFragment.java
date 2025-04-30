@@ -1,16 +1,19 @@
 package com.example.momento.fragments;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +22,7 @@ import com.example.momento.R;
 import com.example.momento.adapters.CategoryAdapter;
 import com.example.momento.database.DatabaseHelper;
 import com.example.momento.models.Category;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -55,43 +58,51 @@ public class ManageCategoriesFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        FloatingActionButton fab = view.findViewById(R.id.fab_add_category);
-        fab.setOnClickListener(v -> showCategoryDialog(null));
+        Button addCategory = view.findViewById(R.id.buttonAddCategory);
+        addCategory.setOnClickListener(v -> showCategoryDialog(null));
 
         return view;
     }
 
     private void showCategoryDialog(@Nullable Category categoryToEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(categoryToEdit == null ? "Add Category" : "Edit Category");
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_category, null, false);
 
-        final EditText input = new EditText(getContext());
-        if (categoryToEdit != null) input.setText(categoryToEdit.getName());
-        builder.setView(input);
+        TextView tvTitle = dialogView.findViewById(R.id.dialogTitle);
+        EditText input   = dialogView.findViewById(R.id.dialogInput);
+        Button btnCancel = dialogView.findViewById(R.id.buttonCancel);
+        Button btnSave   = dialogView.findViewById(R.id.buttonSave);
 
-        builder.setPositiveButton("Save", (dialog, which) -> {
+        boolean isEdit = (categoryToEdit != null);
+        tvTitle.setText(isEdit ? "Rename Category" : "Add Category");
+        if (isEdit) input.setText(categoryToEdit.getName());
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext()).setView(dialogView).create();
+
+        dialog.setOnShowListener(d -> {
+            int tint = ContextCompat.getColor(requireContext(), R.color.dark_blue);
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(tint);
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(tint);
+        });
+
+        dialog.show();
+
+        btnCancel.setOnClickListener(v -> {
+            hideKeyboard();
+            dialog.dismiss();
+        });
+
+        btnSave.setOnClickListener(v -> {
             hideKeyboard();
             String name = input.getText().toString().trim();
             if (name.isEmpty()) {
                 Toast.makeText(getContext(), "Category name cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            if (categoryToEdit == null) {
-                db.insertCategory(name);
-            } else {
-                db.updateCategory(categoryToEdit.getId(), name);
-            }
-
+            if (isEdit) db.updateCategory(categoryToEdit.getId(), name);
+            else db.insertCategory(name);
             refreshCategories();
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            hideKeyboard();
             dialog.dismiss();
         });
-
-        builder.show();
     }
 
     private void refreshCategories() {

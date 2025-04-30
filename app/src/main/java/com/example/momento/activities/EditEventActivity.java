@@ -1,14 +1,13 @@
 package com.example.momento.activities;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,6 +19,9 @@ import com.example.momento.R;
 import com.example.momento.database.DatabaseHelper;
 import com.example.momento.models.Category;
 import com.example.momento.models.Event;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,13 +31,14 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class EditEventActivity extends AppCompatActivity {
 
-    private EditText titleEt, dateEt, locationEt, descEt;
-    private Spinner spinnerCategory;
+    private EditText titleEt, dateEt, locationEt;
+    private AutoCompleteTextView spinnerCategory;
     private ImageView imageView;
     private int eventId;
     private String originalImageUri;
@@ -45,20 +48,17 @@ public class EditEventActivity extends AppCompatActivity {
     private DatabaseHelper db;
 
     private final ActivityResultLauncher<Intent> imagePicker = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            Uri picked = result.getData().getData();
-                            try {
-                                selectedImageUri = copyImageToInternalStorage(picked, originalImageUri);
-                                Glide.with(this)
-                                        .load(selectedImageUri)
-                                        .placeholder(R.drawable.ic_image_placeholder)
-                                        .into(imageView);
-                            } catch (IOException e) {
-                                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+            Uri picked = result.getData().getData();
+            try {
+                selectedImageUri = copyImageToInternalStorage(picked, originalImageUri);
+                Glide.with(this).load(selectedImageUri).placeholder(R.drawable.ic_image_placeholder).into(imageView);
+            } catch (IOException e) {
+                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,19 +68,19 @@ public class EditEventActivity extends AppCompatActivity {
         titleEt = findViewById(R.id.titleEditText);
         dateEt = findViewById(R.id.dateEditText);
         locationEt = findViewById(R.id.locationEditText);
-        descEt = findViewById(R.id.descriptionEditText);
-        spinnerCategory = findViewById(R.id.spinner_category);
+        spinnerCategory = findViewById(R.id.spinnerCategory);
         imageView = findViewById(R.id.imageView);
 
         ImageButton btnClose = findViewById(R.id.btnCloseAdd);
-        if (btnClose != null) btnClose.setOnClickListener(v -> finish());
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> finish());
+        }
 
         db = new DatabaseHelper(this);
         loadCategoriesIntoSpinner();
 
         eventId = getIntent().getIntExtra("eventId", -1);
         Event event = db.getEventById(eventId);
-
         if (event == null) {
             Toast.makeText(this, "Event not found", Toast.LENGTH_SHORT).show();
             finish();
@@ -90,51 +90,49 @@ public class EditEventActivity extends AppCompatActivity {
         titleEt.setText(event.getTitle());
         dateEt.setText(event.getDate());
         locationEt.setText(event.getLocation());
-        descEt.setText(event.getDescription());
-
         originalImageUri = event.getImageUri();
         if (originalImageUri != null && !originalImageUri.isEmpty()) {
             selectedImageUri = Uri.parse(originalImageUri);
-            Glide.with(this)
-                    .load(selectedImageUri)
-                    .placeholder(R.drawable.ic_image_placeholder)
-                    .into(imageView);
+            Glide.with(this).load(selectedImageUri).placeholder(R.drawable.ic_image_placeholder).into(imageView);
         }
-
-        for (int i = 0; i < categoryList.size(); i++) {
-            if (categoryList.get(i).getName().equals(event.getCategory())) {
-                spinnerCategory.setSelection(i);
-                break;
-            }
-        }
+        spinnerCategory.setText(event.getCategory(), false);
         dateEt.setOnClickListener(v -> showDatePicker());
         imageView.setOnClickListener(v -> openImageChooser());
     }
 
     private void loadCategoriesIntoSpinner() {
         categoryList = db.getAllCategories();
-        List<String> categoryNames = new ArrayList<>();
-        for (Category category : categoryList) {
-            categoryNames.add(category.getName());
+        List<String> names = new ArrayList<>();
+        names.add("Select Category");
+        for (Category c : categoryList) {
+            names.add(c.getName());
         }
-        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoryNames);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        categoryAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_item, names);
+        categoryAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerCategory.setAdapter(categoryAdapter);
+        spinnerCategory.setOnItemClickListener((parent, view, position, id) -> {
+            String picked = categoryAdapter.getItem(position);
+            spinnerCategory.setText(picked, false);
+        });
+        spinnerCategory.setText(names.get(0), false);
+        spinnerCategory.post(() ->
+                spinnerCategory.setDropDownWidth(spinnerCategory.getWidth())
+        );
     }
 
     public void saveEvent(android.view.View view) {
-        String title = titleEt.getText().toString();
-        String date = dateEt.getText().toString();
-        String loc = locationEt.getText().toString();
-        String desc = descEt.getText().toString();
-        String cat = spinnerCategory.getSelectedItem() != null ? spinnerCategory.getSelectedItem().toString() : "";
+        String title = titleEt.getText().toString().trim();
+        String date  = dateEt.getText().toString().trim();
+        String loc   = locationEt.getText().toString().trim();
+        String cat   = spinnerCategory.getText().toString().trim();
 
-        if (title.isEmpty() || date.isEmpty() || loc.isEmpty() || cat.isEmpty()) {
+        if (title.isEmpty() || date.isEmpty() || loc.isEmpty() || cat.isEmpty() || cat.equals("Select Category")) {
             Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Event updated = new Event(eventId, title, date, loc, desc, cat, selectedImageUri != null ? selectedImageUri.toString() : null);
+        Event updated = new Event(eventId, title, date, loc, cat, selectedImageUri != null ? selectedImageUri.toString() : null);
 
         boolean ok = db.updateEvent(updated);
         if (ok) {
@@ -152,20 +150,16 @@ public class EditEventActivity extends AppCompatActivity {
     }
 
     private void showDatePicker() {
-        Calendar c = Calendar.getInstance();
-        new DatePickerDialog(this, (view, y, m, d) -> {
-                    Calendar chosen = Calendar.getInstance();
-                    chosen.set(y, m, d);
-                    if (chosen.before(Calendar.getInstance())) {
-                        Toast.makeText(this, "Date can't be in the past!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        dateEt.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(chosen.getTime()));
-                    }
-                },
-                c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH)
-        ).show();
+        CalendarConstraints constraints = new CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now()).build();
+
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date").setCalendarConstraints(constraints).build();
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+            String formatted = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(selection));
+            dateEt.setText(formatted);
+        });
+
+        picker.show(getSupportFragmentManager(), "EDIT_DATE_PICKER");
     }
 
     private Uri copyImageToInternalStorage(Uri sourceUri, String uriToOverwrite) throws IOException {

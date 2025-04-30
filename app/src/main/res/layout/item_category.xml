@@ -3,7 +3,10 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    android:background="@drawable/category_item_background">
 
     <TextView
         android:id="@+id/text_view_category_name"
@@ -11,21 +14,29 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="18sp"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:textStyle="bold"/>
 
-    <ImageButton
-        android:id="@+id/btn_edit_category"
+    <Button
+        android:id="@+id/btn_rename_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Edit Category"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_edit" />
+        android:text="Rename"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/dark_blue"
+        android:textSize="14sp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:layout_marginEnd="8dp"/>
 
-    <ImageButton
+    <Button
         android:id="@+id/btn_delete_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Delete Category"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_delete" />
+        android:text="Delete"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/red"
+        android:textSize="14sp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"/>
 </LinearLayout>

@@ -27,7 +27,7 @@ import com.example.momento.models.Event;
 public class EventDetailsFragment extends Fragment {
 
     private ImageView eventImage;
-    private TextView title, description, date, location, category;
+    private TextView title, date, location, category;
     private int eventId;
     private TextView weatherText;
     private ImageView weatherIcon;
@@ -46,7 +46,6 @@ public class EventDetailsFragment extends Fragment {
 
         eventImage = view.findViewById(R.id.eventDetailImage);
         title = view.findViewById(R.id.eventDetailTitle);
-        description = view.findViewById(R.id.eventDetailDescription);
         date = view.findViewById(R.id.eventDetailDate);
         location = view.findViewById(R.id.eventDetailLocation);
         category = view.findViewById(R.id.eventDetailCategory);
@@ -90,12 +89,6 @@ public class EventDetailsFragment extends Fragment {
         Event event = db.getEventById(eventId);
         if (event == null) return;
 
-        title.setText(event.getTitle());
-        description.setText(event.getDescription());
-        date.setText(event.getDate());
-        location.setText(event.getLocation());
-        category.setText(event.getCategory());
-
         if (event.getImageUri() != null && !event.getImageUri().isEmpty()) {
             Glide.with(this)
                     .load(event.getImageUri())
@@ -105,6 +98,21 @@ public class EventDetailsFragment extends Fragment {
         } else {
             eventImage.setImageResource(R.drawable.ic_image_placeholder);
         }
+
+        title.setText(event.getTitle());
+
+        try {
+            java.text.SimpleDateFormat dbFmt =
+                    new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+            java.util.Date d = dbFmt.parse(event.getDate());
+            java.text.SimpleDateFormat outFmt =
+                    new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            date.setText(outFmt.format(d));
+        } catch (Exception e) {
+            date.setText(event.getDate());
+        }
+        location.setText(event.getLocation());
+        category.setText(event.getCategory());
     }
 
     private final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {

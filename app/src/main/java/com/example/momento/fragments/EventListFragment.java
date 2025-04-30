@@ -71,8 +71,14 @@ public class EventListFragment extends Fragment {
         });
 
         setupCategoryFilter();
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // re‐load the spinner & event list whenever you return here
+        setupCategoryFilter();
     }
 
     private void setupCategoryFilter() {
