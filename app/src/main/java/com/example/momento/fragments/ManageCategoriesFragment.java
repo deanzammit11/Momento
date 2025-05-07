@@ -46,13 +46,21 @@ public class ManageCategoriesFragment extends Fragment {
         adapter = new CategoryAdapter(categories, new CategoryAdapter.OnCategoryActionListener() {
             @Override
             public void onEdit(Category category) {
-                showCategoryDialog(category);
+                if (db.isCategoryUsed(category.getId())) {
+                    Toast.makeText(getContext(), "Cannot Edit: Category is used by existing events", Toast.LENGTH_SHORT).show();
+                } else {
+                    showCategoryDialog(category);
+                }
             }
 
             @Override
             public void onDelete(Category category) {
-                db.deleteCategory(category.getId());
-                refreshCategories();
+                if (db.isCategoryUsed(category.getId())) {
+                    Toast.makeText(getContext(), "Cannot Delete: Category is used by existing events", Toast.LENGTH_SHORT).show();
+                } else {
+                    db.deleteCategory(category.getId());
+                    refreshCategories();
+                }
             }
         });
 

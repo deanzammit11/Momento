@@ -204,6 +204,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return categories;
     }
 
+    public boolean isCategoryUsed(int categoryId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String categoryName = null;
+
+        Cursor catCursor = db.rawQuery("SELECT name FROM categories WHERE id = ?", new String[]{String.valueOf(categoryId)});
+        if (catCursor.moveToFirst()) {
+            categoryName = catCursor.getString(0);
+        }
+        catCursor.close();
+
+        if (categoryName == null) return false;
+
+        Cursor eventCursor = db.rawQuery("SELECT * FROM events WHERE category = ?", new String[]{categoryName});
+        boolean isUsed = eventCursor.moveToFirst();
+        eventCursor.close();
+
+        return isUsed;
+    }
+
     public void updateCategory(int id, String newName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
