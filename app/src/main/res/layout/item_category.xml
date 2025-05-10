@@ -1,3 +1,4 @@
+<!-- Container for a single category row -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,6 +9,7 @@
     android:layout_marginVertical="8dp"
     android:background="@drawable/category_item_background">
 
+    <!-- Displays the category name -->
     <TextView
         android:id="@+id/text_view_category_name"
         android:layout_width="0dp"
@@ -17,6 +19,7 @@
         android:textColor="@android:color/black"
         android:textStyle="bold"/>
 
+    <!-- Rename category button -->
     <Button
         android:id="@+id/btn_rename_category"
         android:layout_width="wrap_content"
@@ -29,6 +32,7 @@
         android:paddingVertical="6dp"
         android:layout_marginEnd="8dp"/>
 
+    <!-- Delete category button -->
     <Button
         android:id="@+id/btn_delete_category"
         android:layout_width="wrap_content"

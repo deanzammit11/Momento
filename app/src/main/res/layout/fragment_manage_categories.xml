@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Container for Manage Categories screen -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_teal">
 
+    <!-- Manage Categories Heading -->
     <TextView
         android:id="@+id/tvManageCategoriesTitle"
         android:layout_width="match_parent"
@@ -16,6 +17,7 @@
         android:gravity="center"
         android:layout_marginTop="50dp"/>
 
+    <!-- Add Category Button -->
     <Button
         android:id="@+id/buttonAddCategory"
         android:layout_width="wrap_content"
@@ -29,6 +31,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
+    <!-- RecyclerView for listing all categories -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_categories"
         android:layout_width="match_parent"

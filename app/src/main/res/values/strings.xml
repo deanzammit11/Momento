@@ -1,6 +1,8 @@
 <resources>
+    <!-- Application name displayed in the home screen -->
     <string name="app_name">Momento</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Label for closing dialogs or screens -->
     <string name="close">Close</string>
+    <!-- Placeholder text for the category filter dropdown -->
     <string name="filter_by_category">Filter by Category</string>
 </resources>

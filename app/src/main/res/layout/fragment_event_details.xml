@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ScrollView for the Event Details screen -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,11 +8,13 @@
     android:background="@color/light_teal"
     android:padding="16dp">
 
+    <!-- Container for event details -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Back Arrow Button -->
         <ImageButton
             android:id="@+id/btnCloseDetails"
             android:layout_width="24dp"
@@ -22,6 +25,7 @@
             android:contentDescription="@string/close"
             app:tint="@color/dark_text" />
 
+        <!-- Card to display the event image -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -31,6 +35,7 @@
             app:strokeColor="@color/dark_text"
             android:backgroundTint="@color/mustard_yellow">
 
+            <!-- Event Image -->
             <ImageView
                 android:id="@+id/eventDetailImage"
                 android:layout_width="match_parent"
@@ -39,6 +44,7 @@
                 android:src="@drawable/ic_image_placeholder" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Event Title -->
         <TextView
             android:id="@+id/eventDetailTitle"
             android:layout_width="match_parent"
@@ -50,12 +56,15 @@
             android:gravity="center"
             android:layout_marginTop="12dp"/>
 
+        <!-- Date, Location, Category Details -->
+        <!-- Vertical container for details rows -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="16dp">
 
+            <!-- Date row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,11 +84,13 @@
                     android:text="25 Apr 2025"
                     android:textColor="@color/dark_text"/>
             </LinearLayout>
+            <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/dark_text"/>
 
+            <!-- Location row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,11 +110,13 @@
                     android:text="Valletta"
                     android:textColor="@color/dark_text"/>
             </LinearLayout>
+            <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/dark_text"/>
 
+            <!-- Category row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -125,12 +138,15 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Container for Edit and Delete Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginTop="24dp">
+
+            <!-- Edit Button -->
             <Button
                 android:id="@+id/buttonEdit"
                 android:layout_width="0dp"
@@ -140,6 +156,8 @@
                 android:backgroundTint="@color/dark_blue"
                 android:textColor="@android:color/white"
                 android:layout_marginEnd="8dp"/>
+
+            <!-- Delete Button -->
             <Button
                 android:id="@+id/buttonDelete"
                 android:layout_width="0dp"
@@ -150,6 +168,7 @@
                 android:textColor="@android:color/white"/>
         </LinearLayout>
 
+        <!-- Weather Info Layout -->
         <LinearLayout
             android:id="@+id/weatherLayout"
             android:layout_width="match_parent"
@@ -172,6 +191,7 @@
                 android:textColor="@color/dark_text" />
         </LinearLayout>
 
+        <!-- Check Weather Button -->
         <Button
             android:id="@+id/buttonCheckWeather"
             android:layout_width="match_parent"

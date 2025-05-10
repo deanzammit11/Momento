@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Navigation graph defining the apps destinations and their IDs -->
+<!-- Start destination specifies that app launches on the HomeFragment -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <!-- Landing page showing the app title, event counter and Add Event button -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.momento.fragments.HomeFragment"
         android:label="Home" />
 
+    <!-- Displays All Events header, category filter dropdown, and a list of event cards -->
     <fragment
         android:id="@+id/eventListFragment"
         android:name="com.example.momento.fragments.EventListFragment"
         android:label="Events" />
 
+    <!-- Displays screen for adding, renaming, and deleting categories -->
     <fragment
         android:id="@+id/manageCategoriesFragment"
         android:name="com.example.momento.fragments.ManageCategoriesFragment"
         android:label="Categories" />
 
+    <!-- Displays the full details of a selected event, with Edit, Delete, and Check Weather buttons. -->
     <fragment
         android:id="@+id/eventDetailsFragment"
         android:name="com.example.momento.fragments.EventDetailsFragment"
         android:label="Event Details">
+        <!-- The primary key of the event to load is passed -->
         <argument android:name="eventId" app:argType="integer"/>
     </fragment>
 </navigation>

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Background drawable for spinner input field -->
+<!-- Defines a mustard yellow rectangle with a dark text border and rounded corners -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/mustard_yellow" />

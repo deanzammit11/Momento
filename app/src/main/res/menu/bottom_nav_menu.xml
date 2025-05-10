@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Navigates to HomeFragment -->
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
         android:title="Home" />
+    <!-- Navigates to eventListFragment -->
     <item
         android:id="@+id/eventListFragment"
         android:icon="@drawable/ic_list"
         android:title="Events" />
+    <!-- Navigates to manageCategoriesFragment -->
     <item
         android:id="@+id/manageCategoriesFragment"
         android:icon="@drawable/ic_categories"

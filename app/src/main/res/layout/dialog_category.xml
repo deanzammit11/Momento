@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for the Add and Rename Category dialog -->
+<!-- Container -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
@@ -7,6 +9,7 @@
     android:layout_height="wrap_content"
     android:padding="24dp">
 
+    <!-- Dialog Title -->
     <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
@@ -16,6 +19,7 @@
         android:textStyle="bold"
         android:textColor="@color/dark_text" />
 
+    <!-- Input field for entering the category -->
     <EditText
         android:id="@+id/dialogInput"
         android:layout_width="match_parent"
@@ -25,6 +29,7 @@
         android:textColor="@color/dark_text"
         android:backgroundTint="@color/dark_text"/>
 
+    <!-- Horizontal container for actions buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,6 +37,7 @@
         android:layout_marginTop="24dp"
         android:gravity="end">
 
+        <!-- Cancel Button -->
         <Button
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
@@ -41,6 +47,7 @@
             android:backgroundTint="@android:color/transparent"
             android:paddingHorizontal="16dp"/>
 
+        <!-- Save Button -->
         <Button
             android:id="@+id/buttonSave"
             android:layout_width="wrap_content"

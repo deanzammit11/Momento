@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Pure black used for selected nav icons and text -->
     <color name="black">#FF000000</color>
+    <!-- Primary background color for screens -->
     <color name="light_teal">#8ED1CB</color>
+    <!-- Dark navy-blue used for buttons, app bar backgrounds, and selected nav items -->
     <color name="dark_blue">#1A374D</color>
+    <!-- Accent color used for input fields and event cards -->
     <color name="mustard_yellow">#FFC857</color>
+    <!-- Error color used for Delete actions -->
     <color name="red">#B00020</color>
+    <!-- Color for headers and primary text/icons -->
     <color name="dark_text">#102A43</color>
+    <!-- Pure white used for unselected nav items and button text on dark backgrounds -->
     <color name="white">#FFFFFF</color>
 </resources>

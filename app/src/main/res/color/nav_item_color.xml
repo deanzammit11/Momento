@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Defines the for the bottom navigation view items when checked -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- When the navigation item is "checked" the color is set to black -->
     <item android:color="@android:color/black"
         android:state_checked="true"/>
+    <!-- When the navigation item is not "checked" the color is set to white -->
     <item android:color="@android:color/white"/>
 </selector>

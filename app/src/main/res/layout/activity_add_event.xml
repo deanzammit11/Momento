@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ScrollView for the Add Event Screen -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,11 +8,13 @@
     android:background="@color/light_teal"
     android:padding="16dp">
 
+    <!-- Container for all form elements -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Back Arrow Button -->
         <ImageButton
             android:id="@+id/btnCloseAdd"
             android:layout_width="24dp"
@@ -22,6 +25,7 @@
             android:contentDescription="@string/close"
             app:tint="@color/dark_text" />
 
+        <!-- Add Event Heading -->
         <TextView
             android:id="@+id/textAddTitle"
             android:layout_width="match_parent"
@@ -33,6 +37,7 @@
             android:gravity="center"
             android:layout_marginBottom="24dp"/>
 
+        <!-- Title Input Field Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,6 +45,7 @@
             android:textColor="@color/dark_text"
             android:layout_marginBottom="4dp"/>
 
+        <!-- Title Input Field Box -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -54,6 +60,7 @@
             app:hintEnabled="false"
             android:layout_marginBottom="16dp">
 
+            <!-- Editable Text for Event Title -->
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/titleEditText"
                 android:layout_width="match_parent"
@@ -65,6 +72,7 @@
                 android:textColorHint="@color/dark_text"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Date Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,6 +80,7 @@
             android:textColor="@color/dark_text"
             android:layout_marginBottom="4dp"/>
 
+        <!-- Date Picker Field -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -86,6 +95,7 @@
             app:hintEnabled="false"
             android:layout_marginBottom="16dp">
 
+            <!-- Text Field showing formatted date -->
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/dateEditText"
                 android:layout_width="match_parent"
@@ -99,6 +109,7 @@
                 android:textColorHint="@color/dark_text"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Location Input Field Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -106,6 +117,7 @@
             android:textColor="@color/dark_text"
             android:layout_marginBottom="4dp"/>
 
+        <!-- Location Input Field Box -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -120,6 +132,7 @@
             app:hintEnabled="false"
             android:layout_marginBottom="24dp">
 
+            <!-- Editable Text for Event Location -->
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/locationEditText"
                 android:layout_width="match_parent"
@@ -131,6 +144,7 @@
                 android:textColorHint="@color/dark_text"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Category Field Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -138,6 +152,7 @@
             android:textColor="@color/dark_text"
             android:layout_marginBottom="4dp"/>
 
+        <!-- Category Dropdown -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/categoryDropdownLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -153,6 +168,7 @@
             app:hintEnabled="false"
             android:layout_marginBottom="24dp">
 
+            <!-- Dropdown Text Field -->
             <AutoCompleteTextView
                 android:id="@+id/spinnerCategory"
                 android:layout_width="match_parent"
@@ -167,6 +183,7 @@
                 android:popupBackground="@drawable/spinner_dropdown_background"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Image Selector Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -174,6 +191,7 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="24dp">
 
+            <!-- Card for the event photo preview -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="100dp"
@@ -183,6 +201,7 @@
                 app:strokeColor="@color/dark_text"
                 android:backgroundTint="@color/mustard_yellow">
 
+                <!-- Selected image or placeholder -->
                 <ImageView
                     android:id="@+id/imageView"
                     android:layout_width="match_parent"
@@ -191,6 +210,7 @@
                     android:src="@drawable/ic_image_placeholder"/>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Button to choose image -->
             <Button
                 android:id="@+id/buttonSelectPhoto"
                 android:layout_width="wrap_content"
@@ -202,6 +222,7 @@
                 android:textColor="@android:color/white"/>
         </LinearLayout>
 
+        <!-- Save Event Button -->
         <Button
             android:id="@+id/buttonSaveEvent"
             android:layout_width="match_parent"

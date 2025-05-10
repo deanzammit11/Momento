@@ -19,9 +19,11 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    // Database configutation
     private static final String DATABASE_NAME = "momento.db";
     private static final int DATABASE_VERSION = 2;
 
+    // Events table and columns
     private static final String TABLE_EVENTS = "events";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_TITLE = "title";
@@ -30,10 +32,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CATEGORY = "category";
     private static final String COLUMN_IMAGE_URI = "image_uri";
 
+    // Categories table and columns
     private static final String TABLE_CATEGORIES = "categories";
     private static final String COLUMN_CATEGORY_ID = "id";
     private static final String COLUMN_CATEGORY_NAME = "name";
 
+    // SQL statement to create the events table
     private static final String CREATE_TABLE_EVENTS =
             "CREATE TABLE " + TABLE_EVENTS + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -43,21 +47,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_CATEGORY + " TEXT, " +
                     COLUMN_IMAGE_URI + " TEXT);";
 
+    // SQL statement to create the categories table
     private static final String CREATE_TABLE_CATEGORIES =
             "CREATE TABLE " + TABLE_CATEGORIES + " (" +
                     COLUMN_CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_CATEGORY_NAME + " TEXT);";
 
+    // Constructor
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    // Executes statements to create events and categories tables
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_EVENTS);
         db.execSQL(CREATE_TABLE_CATEGORIES);
     }
 
+    // Statement to drop existing tables and recreate them.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
@@ -65,6 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // Inserts a new event into the events table
     public void insertEvent(Event event) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -79,12 +88,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Retrieves all events from the events table
     public List<Event> getAllEvents() {
         List<Event> eventList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
+        // Query all columns from the events table
         Cursor cursor = db.query(TABLE_EVENTS, null, null, null, null, null, null);
 
+        // Iterate through result and construct the events
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
@@ -103,6 +115,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return eventList;
     }
 
+    // Gets the column value in a string
     private String getColumnValue(Cursor cursor, String columnName, String defaultValue) {
         try {
             int columnIndex = cursor.getColumnIndexOrThrow(columnName);
@@ -113,6 +126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Retrieves an Event by ID
     public Event getEventById(int eventId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_EVENTS, null, COLUMN_ID + "=?",
@@ -135,6 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return event;
     }
 
+    // Updates an event record
     public boolean updateEvent(Event event) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -154,11 +169,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
+    // Deletes an image by its ID and removes its image from storage
     public boolean deleteEvent(int eventId) {
+        // Load event to delete its image
         Event event = getEventById(eventId);
-
         SQLiteDatabase db = this.getWritableDatabase();
 
+        // If the event has an image URI attempt to delete the image from storage
         if (event != null && event.getImageUri() != null) {
             try {
                 File imageFile = new File(Uri.parse(event.getImageUri()).getPath());
@@ -170,6 +187,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
 
+        // Remove the event record
         int rows = db.delete(TABLE_EVENTS,
                 COLUMN_ID + "=?",
                 new String[]{ String.valueOf(eventId) });
@@ -179,6 +197,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
+    // Inserts a new category into the categories table
     public long insertCategory(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -186,6 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_CATEGORIES, null, values);
     }
 
+    // Retrieves all categories from the events table
     public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -204,10 +224,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return categories;
     }
 
+    // Checks id a category is used by any events
     public boolean isCategoryUsed(int categoryId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String categoryName = null;
 
+        // Lookup category name by ID
         Cursor catCursor = db.rawQuery("SELECT name FROM categories WHERE id = ?", new String[]{String.valueOf(categoryId)});
         if (catCursor.moveToFirst()) {
             categoryName = catCursor.getString(0);
@@ -216,6 +238,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (categoryName == null) return false;
 
+        // Check for any events using that category
         Cursor eventCursor = db.rawQuery("SELECT * FROM events WHERE category = ?", new String[]{categoryName});
         boolean isUsed = eventCursor.moveToFirst();
         eventCursor.close();
@@ -223,6 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isUsed;
     }
 
+    // Updates a category record
     public void updateCategory(int id, String newName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -230,6 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_CATEGORIES, values, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
+    // Deletes a category record by ID
     public void deleteCategory(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_CATEGORIES, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
