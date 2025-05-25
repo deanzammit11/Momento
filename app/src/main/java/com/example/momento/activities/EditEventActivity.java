@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -115,7 +116,8 @@ public class EditEventActivity extends AppCompatActivity {
         // Show date picker when date fields is clicked
         dateEt.setOnClickListener(v -> showDatePicker());
         // Open image picker when selecting a new image
-        imageView.setOnClickListener(v -> openImageChooser());
+        Button selectPhotoBtn = findViewById(R.id.buttonSelectPhoto);
+        selectPhotoBtn.setOnClickListener(v -> openImageChooser());
     }
 
     // Populates spinnerCategory with names from Database
